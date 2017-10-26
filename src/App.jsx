@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
 import './App.css';
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://fa17-cs411-48.cs.illinois.edu:3306';
+axios.get('/sql/db/SELECT+1')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
 class App extends Component {
   render() {
