@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-//import Navigation, {NavLink} from 'react-navigate'
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import 'react-navigate/src/Navigation.css'
 import './App.css';
@@ -699,9 +698,4 @@ class UploadFile extends Component {
                 common_name: item.Common_name,
                 sequence: item.Sequence,
               }
-
-               const updateID = (event) => {
-                  console.log(event.target.value);
-                  //document.getElementById(id)
-                }
             */
