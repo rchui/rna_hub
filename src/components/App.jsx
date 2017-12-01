@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import 'react-navigate/src/Navigation.css'
-import './App.css';
+import '../stylesheets/App.css';
+
 
 /*       <a class="navbar-item">
             <img src="https://bulma.io/images/bulma-type-white.png" alt="Logo" />
@@ -251,90 +252,96 @@ class Search extends Component {
 
               return (
               <div className="box has-text-left">
-
-              <i class="fa fa-trash is-pulled-right" onClick={() => {document.querySelector(".modal").classList.toggle("is-active"); }}></i>
-                <a className="link">Sequence ID: {item.GG_ID}</a>
-                <p>Common Name: {item.Common_name}</p>
-                <div>Primary Accession {item.Primary_accession}</div>
-                <p>Strain: {item.Strain}</p>
-                <p>Sequence: {item.Sequence.length} nucleotides</p>
-                <pre className="Sequence-div has-text-info">{item.Sequence.toUpperCase()}</pre>
-                <i class="fa fa-pencil-square-o is-pulled-right" onClick={() => {document.querySelectorAll(".modal")[1].classList.toggle("is-active"); }}></i>
-                
-{/*Delete model*/}
-                <div className="modal">
-                  <div className="modal-background"></div>
-                  <div className="modal-card">
-                    <header className="modal-card-head">
-                      <p className="modal-card-title">Confirm Delete</p>
-                      <button className="delete" aria-label="close" onClick={() => { document.querySelector(".modal").classList.toggle("is-active");}}></button>
-                    </header>
-                    <section className="modal-card-body">
-                      <div>
-                        Are you sure you want to delete sequence {item.GG_ID}?
+                <article className="med">
+                  <div className="media-content">
+                    <div className="content">
+                      <i className="fa fa-trash is-pulled-right" onClick={() => {document.querySelector(".modal").classList.toggle("is-active"); }}></i>
+                      <a className="link">Sequence ID: {item.GG_ID}</a>
+                      <p>Common Name: {item.Common_name}</p>
+                      <div>Primary Accession {item.Primary_accession}</div>
+                      <p>Strain: {item.Strain}</p>
+                      <p>Sequence: {item.Sequence.length} nucleotides</p>
+                      <div className="container is-fluid">
+                      <div className="Sequence-div has-text-info">{item.Sequence.toUpperCase()}</div>
                       </div>
-                    </section>
-                    <footer className="modal-card-foot">
-                      <button className="button is-success" onClick={() => { this.handleDelete(item.GG_ID) }}>Delete</button>
-                      <button className="button" onClick={() => { document.querySelector(".modal").classList.toggle("is-active"); }}>Cancel</button>
-                    </footer>
-                  </div>
-                </div>
+                      <i class="fa fa-pencil-square-o is-pulled-right" onClick={() => {document.querySelectorAll(".modal")[1].classList.toggle("is-active"); }}></i>
+                      
+      {/*Delete model*/}
+                      <div className="modal">
+                        <div className="modal-background"></div>
+                        <div className="modal-card">
+                          <header className="modal-card-head">
+                            <p className="modal-card-title">Confirm Delete</p>
+                            <button className="delete" aria-label="close" onClick={() => { document.querySelector(".modal").classList.toggle("is-active");}}></button>
+                          </header>
+                          <section className="modal-card-body">
+                            <div>
+                              Are you sure you want to delete sequence {item.GG_ID}?
+                            </div>
+                          </section>
+                          <footer className="modal-card-foot">
+                            <button className="button is-success" onClick={() => { this.handleDelete(item.GG_ID) }}>Delete</button>
+                            <button className="button" onClick={() => { document.querySelector(".modal").classList.toggle("is-active"); }}>Cancel</button>
+                          </footer>
+                        </div>
+                      </div>
 
-{/*Update modl*/}
-                <div className="modal">
-                  <div className="modal-background"></div>
-                  <div className="modal-card">
-                    <header className="modal-card-head">
-                      <p className="modal-card-title">Confirm Update</p>
-                      <button className="delete" aria-label="close" onClick={() => { document.querySelectorAll(".modal")[1].classList.toggle("is-active");}}></button>
-                    </header>
-                    <section className="modal-card-body">
-  {/*Modal: Update Form*/}
-                      <form className="form">
-                        <div className="field">
-                          <label className="label has-text-left">Sequence ID: </label>
-                          <input 
-                            type="text" 
-                            className="input" 
-                            value={item_data.gg_id}
-                            ref="updateID" 
-                            read-only />
+      {/*Update modl*/}
+                      <div className="modal">
+                        <div className="modal-background"></div>
+                        <div className="modal-card">
+                          <header className="modal-card-head">
+                            <p className="modal-card-title">Confirm Update</p>
+                            <button className="delete" aria-label="close" onClick={() => { document.querySelectorAll(".modal")[1].classList.toggle("is-active");}}></button>
+                          </header>
+                          <section className="modal-card-body">
+        {/*Modal: Update Form*/}
+                            <form className="form">
+                              <div className="field">
+                                <label className="label has-text-left">Sequence ID: </label>
+                                <input 
+                                  type="text" 
+                                  className="input" 
+                                  value={item_data.gg_id}
+                                  ref="updateID" 
+                                  read-only />
+                              </div>
+                              <div className="field">
+                                <label className="label has-text-left">Common Name: </label>
+                                <input 
+                                  type="text" 
+                                  className="input" 
+                                  placeholder={item_data.common_name}
+                                  ref="updateID" 
+                                  onChange={updateCommonName} />
+                              </div>
+                              <div className="field">
+                                <label className="label has-text-left">Strain: </label>
+                                <input 
+                                  type="text" 
+                                  className="input" 
+                                  placeholder={item_data.strain}
+                                  ref="updateID" 
+                                  onChange={updateStrain} />
+                              </div>
+                              <div className="field has-addons">
+                                <div className="control is-expanded">
+                                  <label className="label">Sequence: </label>
+                                  <textarea className="textarea" placeholder={item.Sequence} onChange={updateSequence}></textarea>
+                                </div>
+                              </div>
+                            </form>
+              
+                          </section>
+                          <footer className="modal-card-foot">
+                            <button className="button is-success" onClick={() => { this.handleUpdate(item_data)}}>Update</button>
+                            <button className="button" onClick={() => { document.querySelectorAll(".modal")[1].classList.toggle("is-active"); }}>Cancel</button>
+                          </footer>
                         </div>
-                        <div className="field">
-                          <label className="label has-text-left">Common Name: </label>
-                          <input 
-                            type="text" 
-                            className="input" 
-                            placeholder={item_data.common_name}
-                            ref="updateID" 
-                            onChange={updateCommonName} />
-                        </div>
-                        <div className="field">
-                          <label className="label has-text-left">Strain: </label>
-                          <input 
-                            type="text" 
-                            className="input" 
-                            placeholder={item_data.strain}
-                            ref="updateID" 
-                            onChange={updateStrain} />
-                        </div>
-                        <div className="field has-addons">
-                          <div className="control is-expanded">
-                            <label className="label">Sequence: </label>
-                            <textarea className="textarea" placeholder={item.Sequence} onChange={updateSequence}></textarea>
-                          </div>
-                        </div>
-                      </form>
-        
-                    </section>
-                    <footer className="modal-card-foot">
-                      <button className="button is-success" onClick={() => { this.handleUpdate(item_data)}}>Update</button>
-                      <button className="button" onClick={() => { document.querySelectorAll(".modal")[1].classList.toggle("is-active"); }}>Cancel</button>
-                    </footer>
+                      </div>
+                    </div>
                   </div>
-                </div>
-
+                </article>
               </div>)}
             
             )
