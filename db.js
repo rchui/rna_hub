@@ -28,7 +28,6 @@ connection.connect(function(err) {
   }
 });
 
-
 /////////////////////////
 //// SEQUENCE ROUTER ////
 /////////////////////////
