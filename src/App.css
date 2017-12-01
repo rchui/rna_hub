@@ -26,3 +26,7 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.Sequence-div {
+  overflow: scroll;
+  overflow-y: scroll;
+}

@@ -25,7 +25,7 @@ SECRET_KEY = 'i8#@8pvyxb2%k%pgg^-kmr*_t-@3moprdc^8sfd_4$z%f(*_94'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','7000','fa17-cs411-48.cs.illinois.edu']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_tables2',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,11 @@ WSGI_APPLICATION = 'rnahub_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.path.join(BASE_DIR,'mysql'),
+        'USER': 'root',
+        'HOST': '/usr/bin/mysql',
+        'PORT': '',
     }
 }
 
