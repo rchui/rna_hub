@@ -27,17 +27,17 @@ const axios = require('axios');
 
 //// Search by family
 
-// axios.get('http://fa17-cs411-48.cs.illinois.edu:8080/species/', {
-//     params: {
-//       family: 'Lachnospiraceae',
-//     }
-//   })
-//   .then(response => {
-//      console.log(response);
-//      console.log(response.data);
-//   }).catch(error => {
-//      console.log(error);
-//   })
+axios.get('http://fa17-cs411-48.cs.illinois.edu:8080/species/', {
+    params: {
+      family: 'Lachnospiraceae',
+    }
+  })
+  .then(response => {
+     console.log(response);
+     console.log(response.data);
+  }).catch(error => {
+     console.log(error);
+  })
 
 //// Get sequence alignment gg_id's
 
@@ -70,7 +70,7 @@ const axios = require('axios');
 
 //// Delete sequence using gg_id
 
-//axios.delete('http://fa17-cs411-48.cs.illinois.edu:8080/sequence/10', {
+// axios.delete('http://fa17-cs411-48.cs.illinois.edu:8080/sequence/10', {
 //  })
 //  .then(response => {
 //    console.log(response);
@@ -80,7 +80,7 @@ const axios = require('axios');
 
 //// Insert a sequence
 
-//axios.post('http://fa17-cs411-48.cs.illinois.edu:8080/sequence', {
+// axios.post('http://fa17-cs411-48.cs.illinois.edu:8080/sequence', {
 //    gg_id: 10,
 //    strain: 'asdf',
 //    primary_accession: 'asdf',

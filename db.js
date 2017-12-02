@@ -78,19 +78,27 @@ function postSequence(req, res, next) {
 }
 
 function deleteSequence(req, res, next) {
+
   var sql = 'DELETE FROM rRNA_Sample WHERE GG_ID = ' + req.params.gg_id;
 
-  connection.query(sql, function(err, results, fields) {
+  connection.beginTransaction(function(err) {
     if (err) {
       console.log(err);
       res.statusCode = 500;
-      return res.json({ errors: ['Could not update sequence.'] });
-    }
+      return res.json({ errors: ['Could not start transcation.'] })
+  }
+    connection.query(sql, function(err, results, fields) {
+      if (err) {
+        console.log(err);
+        res.statusCode = 500;
+        return res.json({ errors: ['Could not update sequence.'] });
+      }
 
-    console.log(sql);
+      console.log(sql);
 
-    req.message = { message: 'Success'};
-    next();
+      req.message = { message: 'Success'};
+      next();
+    });
   });
 }
 
@@ -221,87 +229,87 @@ function getAlignment(req, res, next) {
 }
 
 function align(seq1, seq2){
-	var seq1_len = seq1.length;
-	var seq2_len = seq2.length;
+  var seq1_len = seq1.length;
+  var seq2_len = seq2.length;
 
 
-	//create multidimensional array
-	//len of seq2 is outer array
-	var outer_arr = new Array(seq2_len+1);
-	//initiaze arrays of len seq1 in each element of outer_arr
-	for (var i = 0; i < outer_arr.length; i++) {
-        	outer_arr[i]= new Array(seq1_len+1)
-	}
+  //create multidimensional array
+  //len of seq2 is outer array
+  var outer_arr = new Array(seq2_len+1);
+  //initiaze arrays of len seq1 in each element of outer_arr
+  for (var i = 0; i < outer_arr.length; i++) {
+          outer_arr[i]= new Array(seq1_len+1)
+  }
 
-	//build the scoring matrix
-	//scores
-	var match=1
-	var miss=-1
-	var indel="-"
+  //build the scoring matrix
+  //scores
+  var match=1
+  var miss=-1
+  var indel="-"
 
 
-	
-	outer_arr[0][0] = 0;
-	
-	//populate outer edges(top and left)
-	for(var i=1;i<=seq2_len;i++) {
-		outer_arr[i][0] = miss * i;
-	}
+  
+  outer_arr[0][0] = 0;
+  
+  //populate outer edges(top and left)
+  for(var i=1;i<=seq2_len;i++) {
+    outer_arr[i][0] = miss * i;
+  }
 
-	for(var i=1;i<=seq1_len;i++){
-		outer_arr[0][i] = miss * i;
-	}
+  for(var i=1;i<=seq1_len;i++){
+    outer_arr[0][i] = miss * i;
+  }
 
-	for(var i=1;i<=seq2_len;i++) {
-    		for(var j=1;j<=seq1_len;j++) { //make into an if statement
-        		if(seq2[i-1] === seq1[j-1]) {
+  for(var i=1;i<=seq2_len;i++) {
+        for(var j=1;j<=seq1_len;j++) { //make into an if statement
+            if(seq2[i-1] === seq1[j-1]) {
                                 var corner = outer_arr[i-1][j-1]+match
                         } else {
                                 var corner = outer_arr[i-1][j-1]+miss
                         }
 
-			outer_arr[i][j] = Math.max(
-            		outer_arr[i-1][j] + miss,
-			corner,
-            		outer_arr[i][j-1] + miss
-        		);
-    		}
-	}
+      outer_arr[i][j] = Math.max(
+                outer_arr[i-1][j] + miss,
+      corner,
+                outer_arr[i][j-1] + miss
+            );
+        }
+  }
 
-	//traverse backwards and build sequences in reverse
-	var i = seq2_len;
-	var j = seq1_len;
-	var new_seq1 = [];
-	var new_seq2 = [];
+  //traverse backwards and build sequences in reverse
+  var i = seq2_len;
+  var j = seq1_len;
+  var new_seq1 = [];
+  var new_seq2 = [];
 
-	do {
-		var up = outer_arr[i-1][j];
-    		var diag = outer_arr[i-1][j-1];
-    		var left = outer_arr[i][j-1];
-    		var max = Math.max(up, diag, left);
-		
-		if (max===up){
-			i--;
-			new_seq1.push(indel);
-			new_seq2.push(seq2[i]);
+  do {
+    var up = outer_arr[i-1][j];
+        var diag = outer_arr[i-1][j-1];
+        var left = outer_arr[i][j-1];
+        var max = Math.max(up, diag, left);
+    
+    if (max===up){
+      i--;
+      new_seq1.push(indel);
+      new_seq2.push(seq2[i]);
 
-		} else if (max===diag) {
-			j--;
-			i--;
-			new_seq1.push(seq1[j]);
-			new_seq2.push(seq2[i]);
+    } else if (max===diag) {
+      j--;
+      i--;
+      new_seq1.push(seq1[j]);
+      new_seq2.push(seq2[i]);
 
-		} else { //max=left
-			j--;
-			new_seq1.push(seq1[j]);
-			new_seq2.push(indel);
-		}
-
-
-	} while(i>0 && j>0);
+    } else { //max=left
+      j--;
+      new_seq1.push(seq1[j]);
+      new_seq2.push(indel);
+    }
 
 
-	return [new_seq1.reverse(), new_seq2.reverse()] ;
+  } while(i>0 && j>0);
+
+
+  return [new_seq1.reverse(), new_seq2.reverse()] ;
 }
 
 
@@ -320,7 +328,7 @@ var speciesRouter = express.Router();
 
 function getFromSpecies(req, res, next) {
   // req.params.num passed through url
-  var sql = 'SELECT R.GG_ID, R.Strain, R.Primary_accession, R.Decision, R.Isolation_source, R.Common_name, R.Sequence FROM rRNA_Sample R, TAXONOMY T WHERE R.GG_ID = T.GG_ID AND T.Family = "' + req.query.family + '"';
+  var sql = 'SELECT R.GG_ID, R.Strain, R.Primary_accession, R.Decision, R.Isolation_source, R.Common_name, R.Sequence FROM rRNA_Sample R, not_null_families T WHERE R.GG_ID = T.GG_ID AND T.Family = "' + req.query.family + '"';
 
   // Query database
   connection.query(sql, function(err, results, fields) {
