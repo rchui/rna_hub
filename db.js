@@ -261,19 +261,19 @@ function align(seq1, seq2){
   }
 
   for(var i=1;i<=seq2_len;i++) {
-        for(var j=1;j<=seq1_len;j++) { //make into an if statement
-            if(seq2[i-1] === seq1[j-1]) {
-                                var corner = outer_arr[i-1][j-1]+match
-                        } else {
-                                var corner = outer_arr[i-1][j-1]+miss
-                        }
+    for(var j=1;j<=seq1_len;j++) { //make into an if statement
+      if(seq2[i-1] === seq1[j-1]) {
+        var corner = outer_arr[i-1][j-1]+match
+      } else {
+        var corner = outer_arr[i-1][j-1]+miss
+      }
 
       outer_arr[i][j] = Math.max(
-                outer_arr[i-1][j] + miss,
+      outer_arr[i-1][j] + miss,
       corner,
-                outer_arr[i][j-1] + miss
-            );
-        }
+      outer_arr[i][j-1] + miss
+      );
+    }
   }
 
   //traverse backwards and build sequences in reverse
@@ -284,9 +284,9 @@ function align(seq1, seq2){
 
   do {
     var up = outer_arr[i-1][j];
-        var diag = outer_arr[i-1][j-1];
-        var left = outer_arr[i][j-1];
-        var max = Math.max(up, diag, left);
+      var diag = outer_arr[i-1][j-1];
+      var left = outer_arr[i][j-1];
+      var max = Math.max(up, diag, left);
     
     if (max===up){
       i--;
@@ -382,6 +382,263 @@ fromSequenceRouter.get('/', getFromSequence, function(req, res) {
 });
 
 app.use('/fromSequence', fromSequenceRouter);
+
+
+///////////////////////
+//// DESIGN ROUTER ////
+///////////////////////
+
+var designRouter = express.Router();
+
+function designSequence(req, res, next) {
+  // req.params.num passed through url
+  var sql = 'SELECT * FROM rRNA_Sample WHERE GG_ID = ' + req.query.gg_id;
+
+  // Query database
+  connection.query(sql, function(err, results, fields) {
+    if (err) {
+      console.log(err);
+      res.statusCode = 500;
+      return res.json({ errors: ['Could not retrieve sequences.'] });
+    }
+
+    console.log(sql);
+
+    req.sequence = results[0].Sequence;
+    req.primers = designPrime(req.sequence)
+    next();
+  });
+}
+
+function designPrime(seq) {
+  function v3v4(seq){
+
+    //locate V3 and v4 hypervariable regions                                                                                                                                                                 
+    //V3 begins ~21% of the way into the sequence
+    //extend the windown arounf V3 to V4 to 50
+
+    var V3_start = Math.round(seq.length*0.21)-100 ;
+  
+    //V4 ends ~51% of the way into the sequence
+
+    var V4_end = Math.round(seq.length*0.51)+100 ;
+  
+    return ([V3_start, V4_end])
+
+  }
+
+
+  indicies=v3v4(seq);
+  //console.log(indicies);
+
+  seq = seq.slice(indicies[0],indicies[1]);
+  seq = seq.split('');
+
+  // Iterate through the sequence, looking for specific properties that define a good PCR primer.
+  function primeIt(seq) {
+  
+   primCandidates = []
+    
+    for (i = 0; i < seq.length; i++) {
+      var j = (i + 2);
+      var code = seq.slice(i, j);
+    
+      //console.log(code)
+    
+      if (code.includes('G') && code.includes('C')) { 
+        //console.log(code);
+          
+        // Check length 18
+        var end18 = seq[i+17]+seq[i+18];
+        var end19 = seq[i+18]+seq[i+19];
+        var end20 = seq[i+19]+seq[i+20];
+        var end21 = seq[i+20]+seq[i+21];
+        var end22 = seq[i+21]+seq[i+22];
+    
+        if (end18 == 'GC' || end18 == 'CG') {
+          //console.log(end18);
+          var count = 0;
+          var prodigy = seq.slice(i, i+19);
+          //console.log(seq.slice(i, i+19));
+          for (i = 0; i < prodigy.length; i++) {
+            if (prodigy[i] == 'G' || prodigy[i] == 'C') {
+              count++;
+            }
+            else {
+              continue;
+            }
+          }
+          var gcCont = (count / prodigy.length);
+          if (gcCont >= 0.40 || gcCont <= 0.60) {
+            primCandidates.push(prodigy);
+            break;
+          }
+          else {
+            continue;
+          }
+        }
+    
+        // Check length 19
+        else if (end19 == 'GC' || end19 == 'CG') {
+          //console.log(end19);
+          var count = 0;
+          var prodigy = seq.slice(i, i+20);
+          for (i = 0; i < prodigy.length; i++) {
+            if (prodigy[i] == "G" || prodigy[i] == 'C') {
+              count++;
+            }
+            else {
+              continue;
+            }
+          }
+          var gcCont = (count / prodigy.length);
+          if (gcCont >= 0.40 || gcCont <= 0.60) {
+            primCandidates.push(prodigy);
+            break;
+          }
+          else {
+            continue;
+          }  
+        }
+  
+        // Check length 20
+        else if (end20 == 'GC' || end20 == 'CG') {
+          var count = 0;
+          var prodigy = seq.slice(i, i+21);
+          for (i = 0; i < prodigy.length; i++) {
+            if (prodigy[i] == 'G' || prodigy[i] == 'C') {
+              count++;
+            }
+            else {
+              continue;
+            }
+          }
+          var gcCont = (count / prodigy.length);
+          if (gcCont >= 0.40 || gcCont <= 0.60) {
+            primCandidates.push(prodigy);
+            break;
+          }
+          else {
+            continue;
+          }  
+        }
+    
+        // Check length 21
+        else if (end21 == 'GC' || end21 == 'CG') {
+          var count = 0;
+          var prodigy = seq.slice(i, i+22);
+          for (i = 0; i < prodigy.length; i++) {
+            if (prodigy[i] == 'G' || prodigy[i] == 'C') {
+              count++;
+            }
+            else {
+              continue;
+            }
+          }
+          var gcCont = (count / prodigy.length);
+          if (gcCont >= 0.40 || gcCont <= 0.60) {
+            primCandidates.push(prodigy);
+            break;
+          }
+          else {
+            continue;
+          }
+        }
+    
+        // Check length 22
+        else if (end22 == 'GC' || end22 == 'CG') {
+          var count = 0;
+          var prodigy = seq.slice(i, i+23);
+          for (i = 0; i < prodigy.length; i++) {
+            if (prodigy[i] == 'G' || prodigy[i] == 'C') {
+              count++;
+            }
+            else {
+              continue;
+            }
+          }
+          var gcCont = (count / prodigy.length);
+          if (gcCont >= 0.40 || gcCont <= 0.60) {
+            primCandidates.push(prodigy);
+            break;
+          }
+          else {
+            continue;
+          }
+        }
+      }
+      else {
+        continue;
+      }
+    }
+    return prodigy;
+  }
+    
+  var output = [];
+ 
+  output.push(primeIt(seq));
+  var revSeq = seq.reverse();
+  output.push(primeIt(revSeq));  
+  
+
+  output[0]=output[0].join('');
+  output[1]=output[1].join('');
+  console.log(output);
+
+  function complement(seq){
+    var comp_seq = '';
+    for (var i=0 , len = seq.length; i < len; i++){
+      if(seq[i]=='A'){
+        comp_seq = comp_seq.concat('T')
+      }else if(seq[i]=='T'){
+        comp_seq = comp_seq.concat('A')
+      } else if (seq[i]=='C') {
+        comp_seq = comp_seq.concat('G')
+      } else {
+        comp_seq = comp_seq.concat('C')
+      }
+    } 
+    
+    return comp_seq;
+  } 
+  output[1]=complement(output[1]);
+
+
+  //check if primers are of optimal melting tempertature
+  
+  function wallace([forward_primer, reverse_primer]){
+
+    function melting(primer){
+      var As = forward_primer.split("A").length - 1;
+      var Ts = forward_primer.split("T").length - 1;
+      var Gs = forward_primer.split("G").length - 1;
+      var Cs = forward_primer.split("C").length - 1;
+  
+      melting_T = 2*(As+Ts) + 4*(Gs+Cs) ; //wallace rule
+
+      return melting_T 
+    }
+
+    if (Math.abs(melting(forward_primer)-melting(reverse_primer)) > 5){
+      console.log("The melting temperature difference between your primer pairs is greater than 5 degrees C.")
+      return false 
+    } else {
+      console.log("The melting temperature difference between your primer pairs is less than 5 degrees C. They will work successfully.")
+      return true
+    }
+  }
+
+  melting = wallace(output)
+  console.log(melting);
+  return output;
+}
+
+designRouter.get('/', designSequence, function(req, res) {
+  // Return results as json response
+  res.json(req.primers);
+});
+
+app.use('/design', designRouter);
 
 // Listen to port 8080
 app.listen(8080);

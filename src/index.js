@@ -9,7 +9,21 @@ ReactDOM.render(<Routes />, document.getElementById('root'));
 registerServiceWorker();
 
 
-const axios = require('axios');
+// const axios = require('axios');
+
+//// Design Primers
+
+// axios.get('http://fa17-cs411-48.cs.illinois.edu:8080/design/', {
+//     params: {
+//       gg_id: 14,
+//     }
+//   })
+//   .then(response => {
+//     console.log(response);
+//     console.log(response.data);
+//   }).catch(error => {
+//     console.log(error);
+//   })
 
 //// Seach by sequence
 
@@ -27,17 +41,17 @@ const axios = require('axios');
 
 //// Search by family
 
-axios.get('http://fa17-cs411-48.cs.illinois.edu:8080/species/', {
-    params: {
-      family: 'Lachnospiraceae',
-    }
-  })
-  .then(response => {
-     console.log(response);
-     console.log(response.data);
-  }).catch(error => {
-     console.log(error);
-  })
+// axios.get('http://fa17-cs411-48.cs.illinois.edu:8080/species/', {
+//     params: {
+//       family: 'Lachnospiraceae',
+//     }
+//   })
+//   .then(response => {
+//      console.log(response);
+//      console.log(response.data);
+//   }).catch(error => {
+//      console.log(error);
+//   })
 
 //// Get sequence alignment gg_id's
 
