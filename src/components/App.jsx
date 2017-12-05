@@ -339,10 +339,14 @@ class Search extends Component {
                           </footer>
                         </div>
                       </div>
+      {/*end update modal*/}
                     </div>
                   </div>
                 </article>
-              </div>)}
+              </div>
+              
+            )
+            }
             
             )
           }

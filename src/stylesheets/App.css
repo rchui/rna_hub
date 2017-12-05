@@ -32,4 +32,28 @@
   overflow: scroll;
   background-color: #f2f2f2;
 }
+.Sequence-div2{
+  word-wrap: break-word;
+  height: 230px;
+  overflow: scroll;
+  background-color: #f2f2f2;
+}
+.sequence-align {
+  display: block;
+  font-family: monospace;
+  white-space: pre;
+  margin-top: 1em;
+  margin-right: 0px;
+  margin-bottom: 1em;
+  margin-left: 0px;
+  color: black;
+  background-color: #f2f2f2;
+  overflow: auto;
+  word-wrap: break-word;
+}
+
+.match {
+  color: red;
+}
+
 
