@@ -40,10 +40,46 @@ export default class Alignment extends Component {
      .then(response => {
        //console.log(response);
        console.log(response.data);
-       this.setState({sequence_1: response.data[0], sequence_2: response.data[1]});
+       var arr1 = this.chunkify(response.data[0], Math.ceil(response.data[0].length/105), false);
+       var arr2 = this.chunkify(response.data[1], Math.ceil(response.data[1].length/105), false);
+       //console.log(arr1);
+       //console.log(arr2);
+       this.setState({sequence_1: arr1, sequence_2: arr2});
      }).catch(error => {
        console.log(error);
      })
+  }
+
+  chunkify(a, n, balanced) {  
+    if (n < 2)
+        return [a];
+    var len = a.length,
+            out = [],
+            i = 0,
+            size;
+    if (len % n === 0) {
+        size = Math.floor(len / n);
+        while (i < len) {
+            out.push(a.slice(i, i += size));
+        }
+    }
+    else if (balanced) {
+        while (i < len) {
+            size = Math.ceil((len - i) / n--);
+            out.push(a.slice(i, i += size));
+        }
+    }
+    else {
+        n--;
+        size = Math.floor(len / n);
+        if (len % size === 0)
+            size--;
+        while (i < size * n) {
+            out.push(a.slice(i, i += size));
+        }
+        out.push(a.slice(size * n));
+    }
+    return out;
   }
 
 
@@ -72,25 +108,48 @@ export default class Alignment extends Component {
 
         <div >
           <div className="container is-fluid">
-            <div className="sequence-align ">
-              {this.state.sequence_1.map((a, i) => {
-                  a = a.toUpperCase();
-                  const b = this.state.sequence_2[i].toUpperCase();
-                  if (a == b) {
-                    return (
-                      <p key={i} >
-                      <em style={{color: 'red'}} className="high">{a}</em>
-                      <em style={{color: 'red'}} className="high">{b}</em>
-                      </p>
-                    );
-                  } else {
-                    return (
-                       <p key={i} >
-                      <em style={{color: 'black'}} className="high">{a}</em>
-                      <em style={{color: 'blue'}} className="high">{b}</em>
-                      </p>
-                    );
-                  }
+            <div className="sequence-align">
+              { 
+                this.state.sequence_1.map((a, i) => {
+                  console.log(a);
+                  console.log(this.state.sequence_2[i]);
+                  const b = this.state.sequence_2[i];
+                  //a.map((ch) => ch.toUpperCase);
+                  //a = a.toUpperCase();
+                  //const b = this.state.sequence_2[i].toUpperCase();
+                  var line = a.map((ch, j) => {
+                    if (a[j] == b[j])
+                    {
+                      return (
+                        <strong style={{color: 'red'}} className="high">{a[j]}</strong>
+                      );
+                    } else {
+                      return (
+                        <strong style={{color: 'blue'}} className="high">{a[j]}</strong>
+                      );
+                    }
+
+                  });
+
+                  var line2= a.map((ch, j) => {
+                    if (a[j] == b[j]) {
+                      return(
+                        <strong style={{color: 'red'}} className="high">{b[j]}</strong>
+                      );
+                    } else {
+                      return (
+                        <strong style={{color: 'blue'}} className="high">{b[j]}</strong>
+                      );
+                    }
+                  });
+
+                  return (
+                    <div>
+                    <p>seq1>> {line}</p>
+                    <p>seq2>> {line2}</p>
+                    <br/>
+                    </div>
+                  );
                 })
               }
             </div>

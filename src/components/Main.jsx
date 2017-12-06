@@ -16,7 +16,7 @@ export default class Main extends Component {
 	                      <h1 className="title is-2">RNAHUB</h1>
 	                    </a>
 	                  </div>
-	                 <div id="navbarMenuHeroA" className="navbar-menu">
+	                  <div id="navbarMenuHeroA" className="navbar-menu">
 	                    <div className="navbar-end is-active">
 	                      <a href="/" className="navbar-item">
 	                        Home
@@ -29,7 +29,7 @@ export default class Main extends Component {
 	                      </a>
 	                    </div>
 	                  </div>
-	         				</div>
+	         		</div>
 	              </nav>
 	            </div>
 	            <div className="hero-body has-text-centered">

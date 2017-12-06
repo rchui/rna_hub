@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Link} from 'react-router-dom'
+import { BrowserRouter as Router, Link, Route} from 'react-router-dom'
 
 export default class Overview extends Component {
   render() {
@@ -15,7 +15,7 @@ export default class Overview extends Component {
                 <div className="subtitle"><i className="icon fa fa-search " /> Text Search </div>
                   Search by unique ID, gene or other keyword
                 <Link to="/search">
-                  <button href="/search" className="button is-link">
+                  <button className="button is-link">
                     Browse Sequences
                   </button>
                 </Link>
