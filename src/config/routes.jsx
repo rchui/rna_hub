@@ -8,7 +8,8 @@ import Search from '../components/Search';
 import Result from '../components/Result';
 import SeqSearch from '../components/SequenceSearch';
 import Align from '../components/Alignment';
-import Example from '../components/Example'
+import Example from '../components/Example';
+import Insert from '../components/Insert';
 
 export default class Routes extends Component {
 	render() {
@@ -31,6 +32,7 @@ export default class Routes extends Component {
 				    <Route path='/seqsearch' component={SeqSearch} />
 				    <Route path='/align' component={Align} />
 				    <Route path='/examples' component={Example} />
+					<Route path='/insert' component={Insert}/>
 			     </div>
 			    <footer className="footer">
 					  <div className="container">

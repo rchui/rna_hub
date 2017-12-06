@@ -13,7 +13,7 @@ export default class Overview extends Component {
             <div className="column">
               <div className="box has-text-centered">
                 <div className="subtitle"><i className="icon fa fa-search " /> Text Search </div>
-                  Search by unique ID, gene or other keyword
+                  <div>Search by unique ID, gene or other keyword</div>
                 <Link to="/search">
                   <button className="button is-link">
                     Browse Sequences
@@ -35,7 +35,7 @@ export default class Overview extends Component {
             <div className="column">
               <div className="box has-text-centered">
                 <div className="subtitle"><i className="icon fa fa-align-center " /> Sequence Alignment </div>
-                  Explore RNA sequences pairwise alignments 
+                  <div>Explore RNA sequences pairwise alignments</div>
                   <Link to="/align">
                     <button className="button is-link">
                       Compute Alignment
@@ -43,6 +43,17 @@ export default class Overview extends Component {
                   </Link>
               </div>
             </div>
+            <div className="column">
+              <div className="box has-text-centered">
+                <div className="subtitle"><i className="icon fa fa-search " /> Insert Sequence </div>
+                  <div>Insert a new sequence into the database.</div>
+                <Link to="/insert">
+                  <button className="button is-link">
+                    Insert Sequence
+                  </button>
+                </Link>
+              </div>
+			</div>
           </div>
           <div className="section">
           </div>

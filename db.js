@@ -284,9 +284,9 @@ function align(seq1, seq2){
 
   do {
     var up = outer_arr[i-1][j];
-      var diag = outer_arr[i-1][j-1];
-      var left = outer_arr[i][j-1];
-      var max = Math.max(up, diag, left);
+    var diag = outer_arr[i-1][j-1];
+    var left = outer_arr[i][j-1];
+    var max = Math.max(up, diag, left);
     
     if (max===up){
       i--;
@@ -304,10 +304,19 @@ function align(seq1, seq2){
       new_seq1.push(seq1[j]);
       new_seq2.push(indel);
     }
-
-
   } while(i>0 && j>0);
 
+  if (i == 0 && j != 0) {
+    while (j != 0) {
+      j--;
+      new_seq1.push(seq1[j]);
+      new_seq2.push(indel);
+    }
+  } else {
+      i--;
+      new_seq1.push(indel);
+      new_seq2.push(seq2[i])
+  }
 
   return [new_seq1.reverse(), new_seq2.reverse()] ;
 }
@@ -404,13 +413,19 @@ function designSequence(req, res, next) {
 
     console.log(sql);
 
-    req.sequence = results[0].Sequence;
-    req.primers = designPrime(req.sequence)
-    next();
+	try {
+      req.sequence = results[0].Sequence;
+      req.sequences = designPrime(req.sequence, req);
+	  req.seq_1 = req.sequences[0];
+      req.seq_2 = req.sequences[1];
+      next();
+	} catch (err) {
+	  console.log(err);
+	}
   });
 }
 
-function designPrime(seq) {
+function designPrime(seq, req) {
   function v3v4(seq){
 
     //locate V3 and v4 hypervariable regions                                                                                                                                                                 
@@ -435,10 +450,13 @@ function designPrime(seq) {
   seq = seq.split('');
 
   // Iterate through the sequence, looking for specific properties that define a good PCR primer.
-  function primeIt(seq) {
+  function primeIt(seq, number, req) {
   
-   primCandidates = []
+   primCandidates = [];
     
+	var startidx = 0;
+    var prodigy = 0;
+	var gcCont = 0;
     for (i = 0; i < seq.length; i++) {
       var j = (i + 2);
       var code = seq.slice(i, j);
@@ -458,7 +476,8 @@ function designPrime(seq) {
         if (end18 == 'GC' || end18 == 'CG') {
           //console.log(end18);
           var count = 0;
-          var prodigy = seq.slice(i, i+19);
+          startidx = i;
+          prodigy = seq.slice(i, i+19);
           //console.log(seq.slice(i, i+19));
           for (i = 0; i < prodigy.length; i++) {
             if (prodigy[i] == 'G' || prodigy[i] == 'C') {
@@ -468,7 +487,7 @@ function designPrime(seq) {
               continue;
             }
           }
-          var gcCont = (count / prodigy.length);
+          gcCont = (count / prodigy.length);
           if (gcCont >= 0.40 || gcCont <= 0.60) {
             primCandidates.push(prodigy);
             break;
@@ -482,7 +501,8 @@ function designPrime(seq) {
         else if (end19 == 'GC' || end19 == 'CG') {
           //console.log(end19);
           var count = 0;
-          var prodigy = seq.slice(i, i+20);
+          startidx = i;
+          prodigy = seq.slice(i, i+20);
           for (i = 0; i < prodigy.length; i++) {
             if (prodigy[i] == "G" || prodigy[i] == 'C') {
               count++;
@@ -491,7 +511,7 @@ function designPrime(seq) {
               continue;
             }
           }
-          var gcCont = (count / prodigy.length);
+          gcCont = (count / prodigy.length);
           if (gcCont >= 0.40 || gcCont <= 0.60) {
             primCandidates.push(prodigy);
             break;
@@ -504,7 +524,8 @@ function designPrime(seq) {
         // Check length 20
         else if (end20 == 'GC' || end20 == 'CG') {
           var count = 0;
-          var prodigy = seq.slice(i, i+21);
+          startidx = i;
+          prodigy = seq.slice(i, i+21);
           for (i = 0; i < prodigy.length; i++) {
             if (prodigy[i] == 'G' || prodigy[i] == 'C') {
               count++;
@@ -513,7 +534,7 @@ function designPrime(seq) {
               continue;
             }
           }
-          var gcCont = (count / prodigy.length);
+          gcCont = (count / prodigy.length);
           if (gcCont >= 0.40 || gcCont <= 0.60) {
             primCandidates.push(prodigy);
             break;
@@ -526,7 +547,8 @@ function designPrime(seq) {
         // Check length 21
         else if (end21 == 'GC' || end21 == 'CG') {
           var count = 0;
-          var prodigy = seq.slice(i, i+22);
+          startidx = i;
+          prodigy = seq.slice(i, i+22);
           for (i = 0; i < prodigy.length; i++) {
             if (prodigy[i] == 'G' || prodigy[i] == 'C') {
               count++;
@@ -535,7 +557,7 @@ function designPrime(seq) {
               continue;
             }
           }
-          var gcCont = (count / prodigy.length);
+          gcCont = (count / prodigy.length);
           if (gcCont >= 0.40 || gcCont <= 0.60) {
             primCandidates.push(prodigy);
             break;
@@ -548,7 +570,8 @@ function designPrime(seq) {
         // Check length 22
         else if (end22 == 'GC' || end22 == 'CG') {
           var count = 0;
-          var prodigy = seq.slice(i, i+23);
+          startidx = i;
+          prodigy = seq.slice(i, i+23);
           for (i = 0; i < prodigy.length; i++) {
             if (prodigy[i] == 'G' || prodigy[i] == 'C') {
               count++;
@@ -557,7 +580,7 @@ function designPrime(seq) {
               continue;
             }
           }
-          var gcCont = (count / prodigy.length);
+          gcCont = (count / prodigy.length);
           if (gcCont >= 0.40 || gcCont <= 0.60) {
             primCandidates.push(prodigy);
             break;
@@ -571,14 +594,23 @@ function designPrime(seq) {
         continue;
       }
     }
+	if (number == 1) {
+      req.startidx_1 = startidx;
+	  req.endidx_1 = (startidx + prodigy.length) - 1;
+	  req.gc_1 = gcCont;
+	} else {
+	  req.startidx_2 = startidx;
+	  req.endidx_2 = (startidx + prodigy.length) - 1;
+	  req.gc_2 = gcCont;
+	}
     return prodigy;
   }
     
   var output = [];
  
-  output.push(primeIt(seq));
+  output.push(primeIt(seq, 1, req));
   var revSeq = seq.reverse();
-  output.push(primeIt(revSeq));  
+  output.push(primeIt(revSeq, 2, req));  
   
 
   output[0]=output[0].join('');
@@ -606,20 +638,26 @@ function designPrime(seq) {
 
   //check if primers are of optimal melting tempertature
   
-  function wallace([forward_primer, reverse_primer]){
+  function wallace([forward_primer, reverse_primer], req){
 
-    function melting(primer){
+    function melting(primer, number, req){
       var As = forward_primer.split("A").length - 1;
       var Ts = forward_primer.split("T").length - 1;
       var Gs = forward_primer.split("G").length - 1;
       var Cs = forward_primer.split("C").length - 1;
-  
+
       melting_T = 2*(As+Ts) + 4*(Gs+Cs) ; //wallace rule
+
+      if (number == 1) {
+	    req.melting_T_1 = melting_T;
+	  } else {
+	    req.melting_T_2 = melting_T;
+	  }
 
       return melting_T 
     }
 
-    if (Math.abs(melting(forward_primer)-melting(reverse_primer)) > 5){
+    if (Math.abs(melting(forward_primer, 1, req)-melting(reverse_primer, 2, req)) > 5){
       console.log("The melting temperature difference between your primer pairs is greater than 5 degrees C.")
       return false 
     } else {
@@ -628,14 +666,14 @@ function designPrime(seq) {
     }
   }
 
-  melting = wallace(output)
+  melting = wallace(output, req)
   console.log(melting);
   return output;
 }
 
 designRouter.get('/', designSequence, function(req, res) {
   // Return results as json response
-  res.json(req.primers);
+  res.json([{'seq': req.seq_1, 'melt': req.melting_T_1, 'startidx': req.startidx_1, 'endidx': req.endidx_1, 'gc': req.gc_1}, {'seq_2': req.seq_2, 'melt_2': req.melting_T_2, 'startidx': req.startidx_2, 'endidx': req.endidx_2, 'gc': req.gc_2}]);
 });
 
 app.use('/design', designRouter);
