@@ -22,9 +22,6 @@ export default class Main extends Component {
 	                        Home
 	                      </a>
 	                      <a href="/examples" className="navbar-item">
-	                        Examples
-	                      </a>
-	                      <a className="navbar-item">
 	                        About
 	                      </a>
 	                    </div>
